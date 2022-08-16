@@ -45,7 +45,7 @@ tampilkan = st.button("Show")
 # Mencoba menampilkan data
 try:
     if tampilkan:
-        st.table(custom_data.reset_index(drop=True))
+        st.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
 
 # Memunculkan exception bila terdapat kolom yang belum diisi
 except:
