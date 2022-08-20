@@ -1,4 +1,5 @@
 # Men-import library yang diperlukan
+import plotly.express as px
 import streamlit as st
 import pandas as pd
 
@@ -40,6 +41,17 @@ for value in mata_kuliah:
     else:
         custom_data = similarity(value, custom_data)
 
+def visual_pie(df):
+    df["Kelas"] = df["Prodi"].str[3:]
+    df["Kelas"] = df["Kelas"].apply(lambda x: "Reguler" if x == "Reg" else "Paralel")
+    df["Prodi"] = df["Prodi"].str[:2]
+    path_cols = ["Prodi","Kelas"]
+
+    fig = px.sunburst(data_frame=df, path=path_cols, maxdepth=-1,
+                      color_discrete_sequence=px.colors.qualitative.Pastel)
+    return fig
+
+
 # Membuat tombol untuk menampilkan data
 tampilkan = st.button("Show")
 
@@ -48,6 +60,7 @@ try:
     if tampilkan:
         st.subheader(f"Ada {custom_data.shape[0]} teman yang sekelas dengan Kamu")
         st.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
+        st.plotly_chart(visual_pie(custom_data), use_container_width=True)
 
 # Memunculkan exception bila terdapat kolom yang belum diisi
 except:
