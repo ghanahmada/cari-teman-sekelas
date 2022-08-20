@@ -34,10 +34,11 @@ def similarity(pelajaran, df):
 # Merapihkan data sesuai dengan fungsi "similarity"
 for value in mata_kuliah:
     if check == 0:
-        custom_data = similarity(value, data)
+        df = similarity(value, data)
+        custom_data = df.drop(df[df["Nama Mahasiswa"] == nama].index)
+        check += 1
     else:
         custom_data = similarity(value, custom_data)
-    check += 1
 
 # Membuat tombol untuk menampilkan data
 tampilkan = st.button("Show")
@@ -45,7 +46,7 @@ tampilkan = st.button("Show")
 # Mencoba menampilkan data
 try:
     if tampilkan:
-        st.subheader(f"Ada {custom_data.shape[0]-1} teman yang sekelas dengan Kamu")
+        st.subheader(f"Ada {custom_data.shape[0]} teman yang sekelas dengan Kamu")
         st.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
 
 # Memunculkan exception bila terdapat kolom yang belum diisi
