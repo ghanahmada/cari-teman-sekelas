@@ -59,8 +59,9 @@ tampilkan = st.button("Show")
 try:
     if tampilkan:
         st.subheader(f"Ada {custom_data.shape[0]} teman yang sekelas dengan Kamu")
-        st.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
-        st.plotly_chart(visual_pie(custom_data), use_container_width=True)
+        left, right = st.columns(2)
+        left.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
+        right.plotly_chart(visual_pie(custom_data), use_container_width=True)
 
 # Memunculkan exception bila terdapat kolom yang belum diisi
 except:
