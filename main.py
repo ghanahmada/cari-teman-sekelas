@@ -42,9 +42,9 @@ for value in mata_kuliah:
         custom_data = similarity(value, custom_data)
 
 def visual_pie(df):
-    df["Kelas"] = df["Prodi"].str[3:]
+    df[["Prodi","Kelas"]] = df["Prodi"].str.split(pat = ' ', expand = True)
+    df["Prodi"] = df["Prodi"].apply(lambda x: "Ilmu Komputer" if x == "IK" else "Sistem Informasi")
     df["Kelas"] = df["Kelas"].apply(lambda x: "Reguler" if x == "Reg" else "Paralel")
-    df["Prodi"] = df["Prodi"].str[:2]
     path_cols = ["Prodi","Kelas"]
 
     fig = px.sunburst(data_frame=df, path=path_cols, maxdepth=-1,
