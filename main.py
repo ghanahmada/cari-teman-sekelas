@@ -45,6 +45,7 @@ tampilkan = st.button("Show")
 # Mencoba menampilkan data
 try:
     if tampilkan:
+        st.subheader(f"Ada {custom_data.shape[0]-1} teman yang sekelas dengan Kamu")
         st.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
 
 # Memunculkan exception bila terdapat kolom yang belum diisi
