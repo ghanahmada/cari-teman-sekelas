@@ -1,5 +1,4 @@
 # Men-import library yang diperlukan
-import plotly.express as px
 import streamlit as st
 import pandas as pd
 
@@ -13,56 +12,60 @@ data = data.fillna("-")
 
 # Membuat list nama mahasiswa dan menampilkan data mahasiswa tersebut
 nama_list = sorted(tuple(data["Nama Mahasiswa"].values.tolist()))
-nama = st.selectbox("Masukkan Nama Lengkap Kamu", nama_list)
-data_user = data[data["Nama Mahasiswa"] == nama]
-st.table(data_user.reset_index(drop=True))
+user_name = st.selectbox("Masukkan Nama Lengkap Kamu", nama_list)
+user_data = data[data["Nama Mahasiswa"] == user_name]
+st.table(user_data.reset_index(drop=True))
+
+# Membuat kolom kanan dan kiri
+left, right = st.columns(2)
 
 # Meminta list mata kuliah yang diinginkan
 matkul = ["DDP 1","Matdis 1","Kalkulus 1","PSD","Manbis","Kombistek"]
-mata_kuliah = st.multiselect("Pilih Mata Kuliah", matkul)
+mata_kuliah = left.multiselect("Pilih Mata Kuliah", matkul)
 
-# Mengubah data user ke dalam bentuk list
-data_user = data_user.values.tolist()
+# Meminta nama mahasiswa yang ingin dibandingkan
+target_name = right.selectbox("Pilih mahasiswa yang ingin dibandingkan", nama_list)
+target_data = data[data["Nama Mahasiswa"] == target_name]
 
 # Nilai awal
-custom_data, check = "", 0
+matkul_sama, custom_data, check = [], "", 0
+
+# Mengubah data user ke list dan data target ke dictionary
+user_list = user_data.values.tolist()
+target_dict = target_data[matkul].to_dict("records")[0]
+
+# Menghitung kelas mata kuliah yang sama antara user dengan target
+for a, b in zip(user_list[0][2:], target_dict):
+    if a != "-":
+        if a == target_dict[b]:
+            matkul_sama.append(b)
+
+matkul_sama2 = ", ".join(matkul_sama)
 
 # Membuat fungsi untuk menampilkan data mahasiswa yang memiliki persamaan tipe kelas dengan user
 def similarity(pelajaran, df):
     num = matkul.index(pelajaran) + 2
-    return df[df[pelajaran] == data_user[0][num]]
+    return df[df[pelajaran] == user_list[0][num]]
 
 # Merapihkan data sesuai dengan fungsi "similarity"
 for value in mata_kuliah:
     if check == 0:
         df = similarity(value, data)
-        custom_data = df.drop(df[df["Nama Mahasiswa"] == nama].index)
+        custom_data = df.drop(df[df["Nama Mahasiswa"] == user_name].index)
         check += 1
     else:
         custom_data = similarity(value, custom_data)
 
-def visual_pie(df):
-    df[["Prodi","Kelas"]] = df["Prodi"].str.split(pat = ' ', expand = True)
-    df["Prodi"] = df["Prodi"].apply(lambda x: "Ilmu Komputer" if x == "IK" else "Sistem Informasi")
-    df["Kelas"] = df["Kelas"].apply(lambda x: "Reguler" if x == "Reg" else "Paralel")
-    path_cols = ["Prodi","Kelas"]
+# Menampilkan data
+if target_name == user_name:
+    pass
+elif len(matkul_sama) > 0:
+    right.markdown(f"Kamu dan {target_name.split()[0]} memiliki **{len(matkul_sama)} kelas matkul** yang sama, yaitu pada matkul:")
+    right.markdown(f"\t**{matkul_sama2}**")
+    right.table(target_data.reset_index(drop=True))
+elif len(matkul_sama) == 0:
+    right.markdown(f"Kamu dan {target_name.split()[0]} tidak memiliki kelas matkul yang sama :(")
 
-    fig = px.sunburst(data_frame=df, path=path_cols, maxdepth=-1,
-                      color_discrete_sequence=px.colors.qualitative.Pastel)
-    return fig
-
-
-# Membuat tombol untuk menampilkan data
-tampilkan = st.button("Show")
-
-# Mencoba menampilkan data
-try:
-    if tampilkan:
-        st.subheader(f"Ada {custom_data.shape[0]} teman yang sekelas dengan Kamu")
-        left, right = st.columns(2)
-        left.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
-        right.plotly_chart(visual_pie(custom_data), use_container_width=True)
-
-# Memunculkan exception bila terdapat kolom yang belum diisi
-except:
-    st.error("Mohon isi kolom di atas.")
+if mata_kuliah != []:
+    left.markdown(f"Ada **{custom_data.shape[0]} mahasiswa** yang sekelas dengan Kamu")
+    left.table(custom_data.sort_values(by=["Nama Mahasiswa"]).reset_index(drop=True))
