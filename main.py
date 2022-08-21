@@ -64,7 +64,7 @@ elif len(matkul_sama) > 0:
     right.markdown(f"\t**{matkul_sama2}**")
     right.table(target_data.reset_index(drop=True))
 elif len(matkul_sama) == 0:
-    right.markdown(f"Kamu dan {target_name.split()[0]} tidak memiliki kelas matkul yang sama :(")
+    right.markdown(f"Kamu dan {target_name.split()[0]} **tidak memiliki** kelas matkul yang sama :(")
 
 if mata_kuliah != []:
     left.markdown(f"Ada **{custom_data.shape[0]} mahasiswa** yang sekelas dengan Kamu")
