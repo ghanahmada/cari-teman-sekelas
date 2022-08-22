@@ -79,7 +79,7 @@ elif len(matkul_sama) > 0:
     if len(matkul_sama) == 1:
         left.markdown(f"Kamu dan {filter_name(target_name)} hanya memiliki **{len(matkul_sama)} kelas matkul** yang sama, yaitu pada matkul:")
     else:
-        left.markdown(f"Kamu dan {filter_name(target_name)} hanya memiliki **{len(matkul_sama)} kelas matkul** yang sama, yaitu pada matkul:")
+        left.markdown(f"Kamu dan {filter_name(target_name)} memiliki **{len(matkul_sama)} kelas matkul** yang sama, yaitu pada matkul:")
     left.markdown(f"\t**{matkul_sama2}**")
     left.table(compare_data)
 elif len(matkul_sama) == 0:
