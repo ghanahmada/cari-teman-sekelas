@@ -1,5 +1,7 @@
+import time
 import streamlit as st
 import pandas as pd
+from connector import Sheet
 
 
 st.set_page_config(page_title="Cari Teman Sekelas", page_icon=":couple:", layout="wide")
@@ -39,7 +41,7 @@ def filter_name(name):
     """Filter and format the student's name."""
     prefixes = ["Muh", "Moh", "Moch"]
     first_name, *last_names = name.split()
-    return ' '.join(last_names) if first_name.startswith(tuple(prefixes)) else first_name
+    return last_names[0] if first_name.startswith(tuple(prefixes)) else first_name
 
 
 def get_classmate(classmate_data, user_data, chosen_subject):
@@ -71,6 +73,23 @@ def display_classmate(classmate_data):
     RIGHT.table(classmate_data)
 
 
+def get_review_text():
+    try:
+        st.subheader("Reviews")
+        SHEET_KEY = "1SJbrFnPWD_TLUWkWx9j0VK3qZhYojK241NCr3sABxts"
+        sheet = Sheet(SHEET_KEY)
+
+        with st.form(key="feedback_form", clear_on_submit=True):
+            review_text = st.text_input("Boleh dong share impression kamu dengan app ini")
+            submit_btn = st.form_submit_button("Submit")
+            if submit_btn and review_text != "":
+                sheet.import_to_sheet(review_text)
+                submit_info = st.success("Review telah dikirim!")
+                time.sleep(3)
+                submit_info.empty()
+    except: pass
+
+
 if __name__ == "__main__":
     data = pd.read_csv("data/processed_data_pembagian_kelas_2023.csv").drop(["NPM"],axis=1).set_index("No").fillna("-")
     list_of_name = sorted(tuple(data["Nama Mahasiswa"].values.tolist()))
@@ -85,3 +104,5 @@ if __name__ == "__main__":
     chosen_subject = get_chosen_subject(user_data)
     if chosen_subject != []:
         display_classmate(get_classmate(data, user_data, chosen_subject))
+    
+    get_review_text()
