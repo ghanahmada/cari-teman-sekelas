@@ -91,7 +91,7 @@ def get_review_text():
 
 
 if __name__ == "__main__":
-    data = pd.read_csv("data/processed_data_pembagian_kelas_2023.csv").drop(["NPM"],axis=1).set_index("No").fillna("-")
+    data = pd.read_csv("Pembagian-Kelas-Mahasiswa-Angkatan-2022.csv").drop(["NPM"],axis=1).set_index("No").fillna("-")
     list_of_name = sorted(tuple(data["Nama Mahasiswa"].values.tolist()))
 
     user_data, user_name = get_user_data()
